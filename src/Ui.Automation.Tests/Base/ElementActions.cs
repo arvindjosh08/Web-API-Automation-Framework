@@ -61,9 +61,9 @@ namespace Ui.Automation.Tests.Base
                 Timeout = TimeSpan.FromSeconds(waitTime),
                 PollingInterval = TimeSpan.FromMilliseconds(500)
             };
-            wait.IgnoreExceptionTypes(typeof(NoSuchElementException), typeof(StaleElementReferenceException));
+            wait.IgnoreExceptionTypes(typeof(StaleElementReferenceException));
 
-            return wait.Until(_ =>
+            var elem = wait.Until(_ =>
             {
                 try
                 {
@@ -72,8 +72,13 @@ namespace Ui.Automation.Tests.Base
                 catch (StaleElementReferenceException)
                 {
                     return null;
+
                 }
             });
+            if (elem == null)
+                throw new NoSuchElementException("Element not visible after wait");
+
+            return elem;
         }
 
         private IWebElement WaitForElementClickable(IWebElement element, int timeoutInSeconds = -1)
@@ -83,7 +88,7 @@ namespace Ui.Automation.Tests.Base
                 Timeout = TimeSpan.FromSeconds(timeoutInSeconds),
                 PollingInterval = TimeSpan.FromMilliseconds(500)
             };
-            wait.IgnoreExceptionTypes(typeof(NoSuchElementException), typeof(StaleElementReferenceException));
+            wait.IgnoreExceptionTypes(typeof(StaleElementReferenceException));
 
             return wait.Until(_ =>
             {
@@ -139,54 +144,52 @@ namespace Ui.Automation.Tests.Base
             throw lastException;
         }
 
-
-        /// <summary>
-        /// Scrolls to the bottom of the page robustly (retries until height stabilizes).
-        /// </summary>
-        public void ScrollToEndOfPage(int maxRetries = 5, int waitMsBetween = 400)
+        public string GetText(By locator, string elementName = "", int timeoutInSeconds = -1)
         {
-            try
-            {
-                IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+            string text = string.Empty;
 
-                long previousHeight = -1;
-                for (int attempt = 0; attempt < maxRetries; attempt++)
+            ExecuteWithRetry(() =>
+            {
+                var element = WaitForElement(locator, timeoutInSeconds);
+                text = element.Text.Trim();
+                logger.Info($"Fetched text from {elementName}: {text}");
+            }, $"GetText failed on {elementName}");
+
+            return text;
+        }
+
+        public void SendKeys(By locator, string text, string elementName = "", int timeoutInSeconds = -1)
+        {
+            ExecuteWithRetry(() =>
+            {
+                var element = WaitForElement(locator, timeoutInSeconds);
+                element.Clear();
+                element.SendKeys(text);
+                logger.Info($"Entered text '{text}' into element: {elementName}");
+            }, $"SendKeys failed on {elementName}");
+        }
+
+        private IWebElement WaitForElement(By locator, int timeoutInSeconds = -1)
+        {
+            int waitTime = timeoutInSeconds > 0 ? timeoutInSeconds : (int)DefaultTimeout.TotalSeconds;
+            var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(waitTime));
+
+            return wait.Until(drv =>
+            {
+                try
                 {
-                    // Try both documentElement and body for cross-browser compatibility
-                    long bodyHeight = Convert.ToInt64(js.ExecuteScript("return document.body.scrollHeight;"));
-                    long docHeight = Convert.ToInt64(js.ExecuteScript("return document.documentElement.scrollHeight;"));
-                    long targetHeight = Math.Max(bodyHeight, docHeight);
-
-                    // Scroll to bottom
-                    js.ExecuteScript("window.scrollTo(0, Math.max(document.body.scrollHeight, document.documentElement.scrollHeight));");
-                    logger.Info($"Scroll attempt {attempt + 1}/{maxRetries} - requested scroll to {targetHeight}");
-
-                    System.Threading.Thread.Sleep(waitMsBetween); // short wait to allow lazy load
-
-                    // Get new height after wait
-                    long newBodyHeight = Convert.ToInt64(js.ExecuteScript("return document.body.scrollHeight;"));
-                    long newDocHeight = Convert.ToInt64(js.ExecuteScript("return document.documentElement.scrollHeight;"));
-                    long newHeight = Math.Max(newBodyHeight, newDocHeight);
-
-                    logger.Info($"Heights (before -> after): {targetHeight} -> {newHeight}");
-
-                    // if height didn't change (or decreased), consider stable
-                    if (newHeight == previousHeight || newHeight == targetHeight)
-                    {
-                        logger.Info("Page height stabilized - assume reached end of page.");
-                        return;
-                    }
-
-                    previousHeight = newHeight;
+                    var el = drv.FindElement(locator);
+                    return el.Displayed ? el : null; // only return if visible
                 }
-
-                logger.Warn("ScrollToEndOfPage: finished retries; page may still be loading new content.");
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "Failed to scroll to the end of the page");
-                throw;
-            }
+                catch (NoSuchElementException)
+                {
+                    return null; // keep waiting
+                }
+                catch (StaleElementReferenceException)
+                {
+                    return null; // retry if element is stale
+                }
+            });
         }
 
     }

@@ -32,7 +32,8 @@ namespace Ui.Automation.Tests.Pages
 
         public void EnterPassword()
         {
-            actions.SendKeys(WebDriverFactory.GetDriver().FindElement(passwordInputBox), "abcdef", "Password Input Box", 10);
+            actions.SendKeys(passwordInputBox, "abcdef", "Password Input Box",10);
+            //actions.SendKeys(WebDriverFactory.GetDriver().FindElement(passwordInputBox), "abcdef", "Password Input Box", 10);
         }
         public void EnterFirstName()
         {
@@ -84,11 +85,6 @@ namespace Ui.Automation.Tests.Pages
         public string GetAccountDeletionText()
         {
             return actions.GetText(WebDriverFactory.GetDriver().FindElement(accountDeletion), "Account Deletion Text");
-        }
-
-        public void ScrollToEnd()
-        {
-            actions.ScrollToEndOfPage();
         }
         public void WaitForContinueButtonToVisible()
         {

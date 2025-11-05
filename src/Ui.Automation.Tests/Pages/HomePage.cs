@@ -34,7 +34,7 @@ namespace Ui.Automation.Tests.Pages
 
         public String GetLoggedInUserName()
         {
-            return actions.GetText(WebDriverFactory.GetDriver().FindElement(loggedInUser), "Logged in user name");
+            return actions.GetText(loggedInUser, "Logged in user name element",10);
         }
 
         public void ClickProducts()

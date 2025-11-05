@@ -54,7 +54,6 @@ namespace Ui.Automation.Tests.Pages
         public void ClickSignUpButton()
         {
             actions.Click(WebDriverFactory.GetDriver().FindElement(signUpButton), "SignUp Button");
-            Thread.Sleep(10000); // Temporary wait for navigation
         }
     }
 }
