@@ -1,6 +1,7 @@
 using OpenQA.Selenium;
 using Ui.Automation.Tests.Base;
 using NLog;
+using OpenQA.Selenium.Support.UI;
 
 namespace Ui.Automation.Tests.Pages
 {
@@ -24,14 +25,14 @@ namespace Ui.Automation.Tests.Pages
         private readonly By mobileNumInputBox = By.Id("mobile_number");
         private readonly By createAccountButton = By.CssSelector("button[data-qa='create-account']");
         private readonly By accountCreateText = By.XPath("//section[@id='form']//h2[contains(@data-qa,'account')]");
-        private readonly By continueButton = By.XPath(" //section[@id='form']//a[contains(@data-qa,'continue')]");
+        private readonly By continueButton = By.XPath("//section[@id='form']//a[contains(@data-qa,'continue')]");
         private readonly By accountDeletion = By.XPath("//section[@id='form']//h2[contains(@data-qa,'account')]");
 
-       
+
 
         public void EnterPassword()
         {
-            actions.SendKeys(WebDriverFactory.GetDriver().FindElement(passwordInputBox), "abcdef", "Password Input Box",10);
+            actions.SendKeys(WebDriverFactory.GetDriver().FindElement(passwordInputBox), "abcdef", "Password Input Box", 10);
         }
         public void EnterFirstName()
         {
@@ -64,22 +65,35 @@ namespace Ui.Automation.Tests.Pages
 
         public void ClickSubmit()
         {
+            IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+            js.ExecuteScript("window.scrollTo(arguments[0], arguments[1]);", 0, 1200);
             actions.Click(WebDriverFactory.GetDriver().FindElement(createAccountButton), "Submit Button");
+            WaitForContinueButtonToVisible();
         }
 
         public string GetAccountCreateText()
         {
-            return actions.GetText(WebDriverFactory.GetDriver().FindElement(accountCreateText), "Account Created Text");
+            return actions.GetText(WebDriverFactory.GetDriver().FindElement(accountCreateText), "Account Created Text", 10);
         }
 
         public void ClickContinueButton()
         {
             actions.Click(WebDriverFactory.GetDriver().FindElement(continueButton), "Continue button");
         }
-        
-         public string GetAccountDeletionText()
+
+        public string GetAccountDeletionText()
         {
             return actions.GetText(WebDriverFactory.GetDriver().FindElement(accountDeletion), "Account Deletion Text");
+        }
+
+        public void ScrollToEnd()
+        {
+            actions.ScrollToEndOfPage();
+        }
+        public void WaitForContinueButtonToVisible()
+        {
+            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+            wait.Until(d => d.FindElement(By.XPath("//section[@id='form']//a[contains(@data-qa,'continue')]")).Text.Contains("Continue"));
         }
     }
 }

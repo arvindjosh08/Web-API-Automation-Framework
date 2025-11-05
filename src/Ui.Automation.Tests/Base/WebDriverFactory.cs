@@ -54,6 +54,15 @@ namespace Ui.Automation.Tests.Base
                     chromeOptions.AddArgument("--start-maximized");
                     chromeOptions.AddArgument("--disable-notifications");
                     chromeOptions.AddArgument("--remote-allow-origins=*");
+                    chromeOptions.AddArguments("--disable-popup-blocking");
+                    chromeOptions.AddArguments("--disable-infobars");
+                    chromeOptions.AddArguments("--disable-extensions");
+                    chromeOptions.AddUserProfilePreference("profile.default_content_setting_values.notifications", 2);
+                    chromeOptions.AddUserProfilePreference("profile.default_content_setting_values.popups", 0);
+                    chromeOptions.AddUserProfilePreference("profile.default_content_setting_values.automatic_downloads", 1);
+                    chromeOptions.AddUserProfilePreference("profile.block_third_party_cookies", true);
+                    chromeOptions.AddUserProfilePreference("profile.managed_default_content_settings.ads", 2);
+                    chromeOptions.AddUserProfilePreference("profile.default_content_setting_values.javascript", 1);
                     driverInstance = new ChromeDriver(chromeOptions);
                     break;
 

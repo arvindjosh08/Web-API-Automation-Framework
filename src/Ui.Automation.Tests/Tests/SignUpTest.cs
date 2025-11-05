@@ -11,8 +11,9 @@ namespace Ui.Automation.Tests.Tests
 
         [TestMethod]
         [TestCategory("ui")]
-        public void VerifySignUpAndDeleteFunctionality()
+        public  void VerifySignUpAndDeleteFunctionality()
         {
+            logger.Info("*******STARTING -  VerifySignUpAndDeleteFunctionality test");
             WebDriverFactory.GetDriver().Navigate().GoToUrl("https://www.automationexercise.com/");
             var homePage = new HomePage();
             homePage.ClickLogin();
@@ -29,12 +30,13 @@ namespace Ui.Automation.Tests.Tests
             signUpPage.EnterCity();
             signUpPage.EnterZipCode();
             signUpPage.EnterMobile();
-            signUpPage.ClickSubmit();
+            signUpPage.ClickSubmit();        
             Assert.AreEqual("ACCOUNT CREATED!",signUpPage.GetAccountCreateText());
             signUpPage.ClickContinueButton();
             Assert.AreEqual("Logged in as" + " " + randomName, homePage.GetLoggedInUserName(), "Logged in user name does not match");
             homePage.ClickDeleteAccount();
             Assert.AreEqual("ACCOUNT DELETED!", signUpPage.GetAccountDeletionText(), "Account deletion text does not match");
+            
 
         }
     } 

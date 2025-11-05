@@ -24,6 +24,7 @@ namespace Api.Automation.Tests.Tests
         public async Task CreateProduct_ShouldReturn201()
         {
             // 2. Read JSON from file
+            logger.Info("*******STARTING -  CreateProduct_ShouldReturn201 test");
             string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string fullPath = Path.Combine(baseDirectory, "src/Api.Automation.Tests/Data/ApiRequests/CreateAccountReq.json");
             string json = File.ReadAllText(fullPath);

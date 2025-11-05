@@ -8,7 +8,7 @@ namespace Ui.Automation.Tests.Base
     public class ElementActions
     {
         private IWebDriver driver;
-        private readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(10);
+        private readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(20);
         private const int MaxRetryCount = 3;
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
@@ -58,7 +58,7 @@ namespace Ui.Automation.Tests.Base
 
             var wait = new DefaultWait<IWebDriver>(driver)
             {
-                Timeout = TimeSpan.FromSeconds(timeoutInSeconds),
+                Timeout = TimeSpan.FromSeconds(waitTime),
                 PollingInterval = TimeSpan.FromMilliseconds(500)
             };
             wait.IgnoreExceptionTypes(typeof(NoSuchElementException), typeof(StaleElementReferenceException));
@@ -101,6 +101,7 @@ namespace Ui.Automation.Tests.Base
         private void ExecuteWithRetry(Action action, string errorMessage)
         {
             int attempts = 0;
+            Exception lastException = null;
 
             while (attempts < MaxRetryCount)
             {
@@ -113,21 +114,74 @@ namespace Ui.Automation.Tests.Base
                 {
                     attempts++;
                     logger.Warn($"StaleElementReferenceException on attempt {attempts}: {ex.Message}");
+                    lastException = ex;
                 }
                 catch (ElementClickInterceptedException ex)
                 {
                     attempts++;
                     logger.Warn($"ElementClickInterceptedException on attempt {attempts}: {ex.Message}");
+                    lastException = ex;
                 }
                 catch (WebDriverException ex)
                 {
                     attempts++;
                     logger.Warn($"WebDriverException on attempt {attempts}: {ex.Message}");
+                    lastException = ex;
                 }
             }
-
-            throw new Exception($"{errorMessage} after {MaxRetryCount} attempts.");
+            logger.Error(lastException, $"{errorMessage} after {MaxRetryCount} attempts.");
+            throw lastException;
         }
+
+
+        /// <summary>
+/// Scrolls to the bottom of the page robustly (retries until height stabilizes).
+/// </summary>
+public void ScrollToEndOfPage(int maxRetries = 5, int waitMsBetween = 400)
+{
+    try
+    {
+        IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+
+        long previousHeight = -1;
+        for (int attempt = 0; attempt < maxRetries; attempt++)
+        {
+            // Try both documentElement and body for cross-browser compatibility
+            long bodyHeight = Convert.ToInt64(js.ExecuteScript("return document.body.scrollHeight;"));
+            long docHeight = Convert.ToInt64(js.ExecuteScript("return document.documentElement.scrollHeight;"));
+            long targetHeight = Math.Max(bodyHeight, docHeight);
+
+            // Scroll to bottom
+            js.ExecuteScript("window.scrollTo(0, Math.max(document.body.scrollHeight, document.documentElement.scrollHeight));");
+            logger.Info($"Scroll attempt {attempt + 1}/{maxRetries} - requested scroll to {targetHeight}");
+
+            System.Threading.Thread.Sleep(waitMsBetween); // short wait to allow lazy load
+
+            // Get new height after wait
+            long newBodyHeight = Convert.ToInt64(js.ExecuteScript("return document.body.scrollHeight;"));
+            long newDocHeight = Convert.ToInt64(js.ExecuteScript("return document.documentElement.scrollHeight;"));
+            long newHeight = Math.Max(newBodyHeight, newDocHeight);
+
+            logger.Info($"Heights (before -> after): {targetHeight} -> {newHeight}");
+
+            // if height didn't change (or decreased), consider stable
+            if (newHeight == previousHeight || newHeight == targetHeight)
+            {
+                logger.Info("Page height stabilized - assume reached end of page.");
+                return;
+            }
+
+            previousHeight = newHeight;
+        }
+
+        logger.Warn("ScrollToEndOfPage: finished retries; page may still be loading new content.");
+    }
+    catch (Exception ex)
+    {
+        logger.Error(ex, "Failed to scroll to the end of the page");
+        throw;
+    }
+}
 
     }
 }

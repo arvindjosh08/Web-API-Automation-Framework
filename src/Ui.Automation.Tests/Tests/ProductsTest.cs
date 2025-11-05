@@ -12,6 +12,7 @@ namespace Ui.Automation.Tests.Tests
         [TestCategory("ui")]
         public void VerifySearchProductsFunctionality()
         {
+            logger.Info("*******STARTING -  VerifySearchProductsFunctionality test");
             WebDriverFactory.GetDriver().Navigate().GoToUrl("https://www.automationexercise.com/");
             var homePage = new HomePage();
             homePage.ClickProducts();

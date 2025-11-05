@@ -67,6 +67,7 @@ TestAutomationFramework/
 - [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
 - [Visual Studio Code](https://code.visualstudio.com/) or Visual Studio 2022
 - Internet access for downloading NuGet packages
+- Chrome and Edge browsers are installed in your machine
 - No need to installed browser specific drivers as it is automatically handled through WebDriverManager
 
 
@@ -84,7 +85,7 @@ dotnet restore
 dotnet build
 ```
 
-## Running Tests on mac
+## Running Tests on mac using zsh terminal
 Follow these steps to execute the tests on your Mac machine:
 1. Run all tests (both UI and API) with console logging. By default the UI test will run on chrome browser
 ```bash
@@ -115,6 +116,16 @@ dotnet test --filter "TestCategory=ui"
 dotnet test --filter "TestCategory=api"
 ```
 
+
+## Running Tests on windows using git bash terminal
+1. Run only UI test in edge browser with console logging.
+```bash
+dotnet test --filter "TestCategory=ui" --logger "console;verbosity=detailed" -- "TestRunParameters.Parameter(name=\"Browser\", value=\"edge\")"
+```
+
+## Running Test on windows from Visual studio Test Explorer
+Test explorer is another option from where we can run the test
+
 ## Parallel Execution
 To run test in parallel. Go to MSTestSettings.cs file available in the root of the project. Uncomment the assemble attribute and then run one of the commands in above section
 
@@ -124,3 +135,9 @@ To run test in parallel. Go to MSTestSettings.cs file available in the root of t
 - File: Logs/test-log-{date}.log
 - Configure log levels and targets in NLog.config.
 - Thread ID is logged for parallel execution.
+
+
+## Further Enhancements
+- Integrate html reports like Extent or Allure
+- CICD integration
+- Appium integration
