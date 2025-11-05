@@ -23,25 +23,28 @@ namespace Api.Automation.Tests.Tests
         [TestCategory("api")]
         public async Task CreateProduct_ShouldReturn201()
         {
-            // 2. Read JSON from file
+
+            //Arrange
             logger.Info("*******STARTING -  CreateProduct_ShouldReturn201 test");
             string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string fullPath = Path.Combine(baseDirectory, "src/Api.Automation.Tests/Data/ApiRequests/CreateAccountReq.json");
             string json = File.ReadAllText(fullPath);
             var product = JsonConvert.DeserializeObject<CreateAccountReqDto>(json);
 
-            // 3. Modify fields dynamically
             product.name = "Product_" + Guid.NewGuid().ToString("N");
             product.email = "User_" + Guid.NewGuid().ToString("N") + "@example.com";
-            // 4. Convert to dictionary
             var dict = JObject.FromObject(product)
                               .ToObject<Dictionary<string, string>>();
 
+            //Act
+
             var response = await _createAccount.RegisterUser(dict);
             var responseObj = JsonConvert.DeserializeObject<CreateAccountResDto>(response.Content);
+
+            //Assert
             Assert.AreEqual(201, responseObj.responseCode);
             Assert.AreEqual("User created!", responseObj.message);
-            
+
         }
 
     }

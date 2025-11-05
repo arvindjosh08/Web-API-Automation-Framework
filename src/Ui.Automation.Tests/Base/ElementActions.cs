@@ -110,6 +110,12 @@ namespace Ui.Automation.Tests.Base
                     action.Invoke();
                     return; // success
                 }
+                catch (NoSuchElementException ex)
+                {
+                    attempts++;
+                    logger.Warn($"NoSuchElementException on attempt {attempts}: {ex.Message}");
+                    lastException = ex;
+                }
                 catch (StaleElementReferenceException ex)
                 {
                     attempts++;
@@ -135,53 +141,53 @@ namespace Ui.Automation.Tests.Base
 
 
         /// <summary>
-/// Scrolls to the bottom of the page robustly (retries until height stabilizes).
-/// </summary>
-public void ScrollToEndOfPage(int maxRetries = 5, int waitMsBetween = 400)
-{
-    try
-    {
-        IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
-
-        long previousHeight = -1;
-        for (int attempt = 0; attempt < maxRetries; attempt++)
+        /// Scrolls to the bottom of the page robustly (retries until height stabilizes).
+        /// </summary>
+        public void ScrollToEndOfPage(int maxRetries = 5, int waitMsBetween = 400)
         {
-            // Try both documentElement and body for cross-browser compatibility
-            long bodyHeight = Convert.ToInt64(js.ExecuteScript("return document.body.scrollHeight;"));
-            long docHeight = Convert.ToInt64(js.ExecuteScript("return document.documentElement.scrollHeight;"));
-            long targetHeight = Math.Max(bodyHeight, docHeight);
-
-            // Scroll to bottom
-            js.ExecuteScript("window.scrollTo(0, Math.max(document.body.scrollHeight, document.documentElement.scrollHeight));");
-            logger.Info($"Scroll attempt {attempt + 1}/{maxRetries} - requested scroll to {targetHeight}");
-
-            System.Threading.Thread.Sleep(waitMsBetween); // short wait to allow lazy load
-
-            // Get new height after wait
-            long newBodyHeight = Convert.ToInt64(js.ExecuteScript("return document.body.scrollHeight;"));
-            long newDocHeight = Convert.ToInt64(js.ExecuteScript("return document.documentElement.scrollHeight;"));
-            long newHeight = Math.Max(newBodyHeight, newDocHeight);
-
-            logger.Info($"Heights (before -> after): {targetHeight} -> {newHeight}");
-
-            // if height didn't change (or decreased), consider stable
-            if (newHeight == previousHeight || newHeight == targetHeight)
+            try
             {
-                logger.Info("Page height stabilized - assume reached end of page.");
-                return;
+                IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
+
+                long previousHeight = -1;
+                for (int attempt = 0; attempt < maxRetries; attempt++)
+                {
+                    // Try both documentElement and body for cross-browser compatibility
+                    long bodyHeight = Convert.ToInt64(js.ExecuteScript("return document.body.scrollHeight;"));
+                    long docHeight = Convert.ToInt64(js.ExecuteScript("return document.documentElement.scrollHeight;"));
+                    long targetHeight = Math.Max(bodyHeight, docHeight);
+
+                    // Scroll to bottom
+                    js.ExecuteScript("window.scrollTo(0, Math.max(document.body.scrollHeight, document.documentElement.scrollHeight));");
+                    logger.Info($"Scroll attempt {attempt + 1}/{maxRetries} - requested scroll to {targetHeight}");
+
+                    System.Threading.Thread.Sleep(waitMsBetween); // short wait to allow lazy load
+
+                    // Get new height after wait
+                    long newBodyHeight = Convert.ToInt64(js.ExecuteScript("return document.body.scrollHeight;"));
+                    long newDocHeight = Convert.ToInt64(js.ExecuteScript("return document.documentElement.scrollHeight;"));
+                    long newHeight = Math.Max(newBodyHeight, newDocHeight);
+
+                    logger.Info($"Heights (before -> after): {targetHeight} -> {newHeight}");
+
+                    // if height didn't change (or decreased), consider stable
+                    if (newHeight == previousHeight || newHeight == targetHeight)
+                    {
+                        logger.Info("Page height stabilized - assume reached end of page.");
+                        return;
+                    }
+
+                    previousHeight = newHeight;
+                }
+
+                logger.Warn("ScrollToEndOfPage: finished retries; page may still be loading new content.");
             }
-
-            previousHeight = newHeight;
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Failed to scroll to the end of the page");
+                throw;
+            }
         }
-
-        logger.Warn("ScrollToEndOfPage: finished retries; page may still be loading new content.");
-    }
-    catch (Exception ex)
-    {
-        logger.Error(ex, "Failed to scroll to the end of the page");
-        throw;
-    }
-}
 
     }
 }
