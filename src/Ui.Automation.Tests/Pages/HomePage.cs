@@ -1,0 +1,68 @@
+using OpenQA.Selenium;
+using Ui.Automation.Tests.Base;
+using NLog;
+
+namespace Ui.Automation.Tests.Pages
+{
+    public class HomePage : BasePage
+    {
+        private ElementActions actions;
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
+
+        public HomePage() : base()
+        {
+            this.actions = new ElementActions(); // ElementActions fetches driver internally
+        }
+
+        private readonly By navigationBar = By.XPath("//ul[contains(@class,'navbar')]//a");
+        private readonly By loggedInUser = By.XPath("//ul[contains(@class,'navbar')]//a[contains(text(),'Logged')]");
+
+        public void ClickLogin()
+        {
+
+            var navigationList = WebDriverFactory.GetDriver().FindElements(navigationBar);
+            foreach (var navItem in navigationList)
+            {
+                var loginInnerText = actions.GetText(navItem, "Login/Signup navigation item");
+                if (loginInnerText.Trim().Contains("Signup / Login", StringComparison.OrdinalIgnoreCase))
+                {
+                    actions.Click(navItem, "Login Navigation Item");
+                    break;
+                }
+            }
+        }
+
+        public String GetLoggedInUserName()
+        {
+            return actions.GetText(WebDriverFactory.GetDriver().FindElement(loggedInUser), "Logged in user name");
+        }
+
+        public void ClickProducts()
+        {
+            var navigationList = WebDriverFactory.GetDriver().FindElements(navigationBar);
+            foreach (var navItem in navigationList)
+            {
+                var productsInnerText = actions.GetText(navItem, "Products navigation item");
+                if (productsInnerText.Trim().Contains("Products", StringComparison.OrdinalIgnoreCase))
+                {
+                    actions.Click(navItem, "Products Navigation Item");
+                    break;
+                }
+            }
+        }
+
+          public void ClickDeleteAccount()
+        {
+            var navigationList = WebDriverFactory.GetDriver().FindElements(navigationBar);
+            foreach (var navItem in navigationList)
+            {
+                var deleteInnerText = actions.GetText(navItem, "Delete Account navigation item");
+                if (deleteInnerText.Trim().Contains("Delete", StringComparison.OrdinalIgnoreCase))
+                {
+                    actions.Click(navItem, "Delete Account Navigation Item");
+                    break;
+                }
+            }
+        }
+    }
+}

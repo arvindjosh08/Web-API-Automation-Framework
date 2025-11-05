@@ -1,0 +1,14 @@
+{
+"name": "Danial",
+"email": "danielvituso@gmail.com",
+"password": "danial123",
+"firstname": "Danial",
+"lastname": "Vituso",
+"company":"Jeremy",
+"address1":"Coronation street",
+"country":"Australia",
+"zipcode": 2153,
+"state":"NSW",
+"city": "Marsden Park",
+"mobile_number": 1234567890
+}
