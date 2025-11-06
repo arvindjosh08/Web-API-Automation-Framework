@@ -4,13 +4,15 @@ using NLog;
 
 namespace Ui.Automation.Tests.Pages
 {
-    public class ProductsPage : BasePage
+    public class ProductsPage
     {
+        private readonly IWebDriver driver;
         private ElementActions actions;
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
-        public ProductsPage() : base()
+        public ProductsPage(IWebDriver driver)
         {
-            this.actions = new ElementActions(); // ElementActions fetches driver internally
+            this.driver = driver;
+            this.actions = new ElementActions(driver);
         }
 
         private readonly By searchedProducts = By.XPath("//div[contains(@class,'productinfo')]//p");
@@ -20,22 +22,22 @@ namespace Ui.Automation.Tests.Pages
 
         public void EnterProductName(String productName)
         {
-            actions.SendKeys(WebDriverFactory.GetDriver().FindElement(searchInputBox), productName, "Search Input Box");
+            actions.SendKeys(driver.FindElement(searchInputBox), productName, "Search Input Box");
         }
         public void ClickSearchButton()
         {
-            actions.Click(WebDriverFactory.GetDriver().FindElement(searchButton), "Search Button");
+            actions.Click(driver.FindElement(searchButton), "Search Button");
         }
 
         public String GetSearchedProductTitle()
         {
-            return actions.GetText(WebDriverFactory.GetDriver().FindElement(searchedProductTitle), "Searched Product Title");
+            return actions.GetText(driver.FindElement(searchedProductTitle), "Searched Product Title");
         }
 
         public Boolean IsSearchedProductsRelevant(String expectedKeyword)
         {
             Boolean allRelevant = true;
-            var productsList = WebDriverFactory.GetDriver().FindElements(searchedProducts);
+            var productsList = driver.FindElements(searchedProducts);
             foreach (var product in productsList)
             {
                 var productName = actions.GetText(product, "Searched Product Name");

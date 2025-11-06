@@ -1,11 +1,14 @@
 using Ui.Automation.Tests.Base;
 using NLog;
+using OpenQA.Selenium;
 
 namespace Ui.Automation.Tests.Base
 {
     [TestClass]
     public class BaseTest
     {
+        protected IWebDriver driver;
+
         public TestContext TestContext { get; set; }
         protected static readonly Logger logger = LogManager.GetCurrentClassLogger();
          static BaseTest()
@@ -14,7 +17,6 @@ namespace Ui.Automation.Tests.Base
             logger.Info("NLog initialized successfully.");
         }
 
-
         [TestInitialize]
         public void SetUp()
         {
@@ -22,7 +24,7 @@ namespace Ui.Automation.Tests.Base
             {
                 string browser = GetBrowserName();
                 WebDriverFactory.SetDriver(browser);
-                var driver = WebDriverFactory.GetDriver();
+                driver = WebDriverFactory.GetDriver();
             }
             catch (Exception e)
             {

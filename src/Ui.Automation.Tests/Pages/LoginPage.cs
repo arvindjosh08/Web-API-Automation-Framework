@@ -4,14 +4,15 @@ using NLog;
 
 namespace Ui.Automation.Tests.Pages
 {
-    public class LoginPage : BasePage
+    public class LoginPage
     {
+        private readonly IWebDriver driver;
         private ElementActions actions;
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
-        public LoginPage() : base()
+        public LoginPage(IWebDriver driver)
         {
-
-            this.actions = new ElementActions(); // ElementActions fetches driver internally
+            this.driver = driver;
+            this.actions = new ElementActions(driver); // ElementActions fetches driver internally
         }
 
         private readonly By emailAddress = By.Name("email");
@@ -25,35 +26,35 @@ namespace Ui.Automation.Tests.Pages
 
         public void EnterEmailAddress()
         {
-            actions.SendKeys(WebDriverFactory.GetDriver().FindElement(emailAddress), "janison@gmail.com", "Email Address Input");
+            actions.SendKeys(driver.FindElement(emailAddress), "janison@gmail.com", "Email Address Input");
         }
 
         public void EnterPassword()
         {
-            actions.SendKeys(WebDriverFactory.GetDriver().FindElement(password), "testing", "Email Address Input");
+            actions.SendKeys(driver.FindElement(password), "testing", "Email Address Input");
         }
 
         public void ClickLogin()
         {
-            actions.Click(WebDriverFactory.GetDriver().FindElement(loginButton), "Login Button");
+            actions.Click(driver.FindElement(loginButton), "Login Button");
         }
 
         public void EnterSignUpEmail()
         {
             string randomEmail = "User_" + Guid.NewGuid().ToString("N") + "@example.com";
-            actions.SendKeys(WebDriverFactory.GetDriver().FindElement(signUpEmail), randomEmail, "Email Address Input");
+            actions.SendKeys(driver.FindElement(signUpEmail), randomEmail, "Email Address Input");
         }
 
         public string EnterSignUpName()
         {
             string randomName = "Product_" + Guid.NewGuid().ToString("N");
-            actions.SendKeys(WebDriverFactory.GetDriver().FindElement(signUpName), randomName, "SignUp Name Input");
+            actions.SendKeys(driver.FindElement(signUpName), randomName, "SignUp Name Input");
             return randomName;
         }
 
         public void ClickSignUpButton()
         {
-            actions.Click(WebDriverFactory.GetDriver().FindElement(signUpButton), "SignUp Button");
+            actions.Click(driver.FindElement(signUpButton), "SignUp Button");
         }
     }
 }

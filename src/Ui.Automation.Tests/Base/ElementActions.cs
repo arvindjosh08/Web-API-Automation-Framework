@@ -12,10 +12,9 @@ namespace Ui.Automation.Tests.Base
         private const int MaxRetryCount = 3;
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
-        public ElementActions()
+        public ElementActions(IWebDriver driver )
         {
-            this.driver = WebDriverFactory.GetDriver(); // Thread-safe driver from DriverFactory
-
+            this.driver = driver;
         }
         public void Click(IWebElement element, string elementName = "", int timeoutInSeconds = -1)
         {

@@ -4,14 +4,16 @@ using NLog;
 
 namespace Ui.Automation.Tests.Pages
 {
-    public class HomePage : BasePage
+    public class HomePage
     {
         private ElementActions actions;
+        private readonly IWebDriver driver;
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
-        public HomePage() : base()
+        public HomePage(IWebDriver driver)
         {
-            this.actions = new ElementActions(); // ElementActions fetches driver internally
+            this.driver = driver;
+            this.actions = new ElementActions(driver);
         }
 
         private readonly By navigationBar = By.XPath("//ul[contains(@class,'navbar')]//a");
@@ -20,7 +22,7 @@ namespace Ui.Automation.Tests.Pages
         public void ClickLogin()
         {
 
-            var navigationList = WebDriverFactory.GetDriver().FindElements(navigationBar);
+            var navigationList = driver.FindElements(navigationBar);
             foreach (var navItem in navigationList)
             {
                 var loginInnerText = actions.GetText(navItem, "Login/Signup navigation item");
@@ -34,12 +36,12 @@ namespace Ui.Automation.Tests.Pages
 
         public String GetLoggedInUserName()
         {
-            return actions.GetText(loggedInUser, "Logged in user name element",10);
+            return actions.GetText(loggedInUser, "Logged in user name element", 10);
         }
 
         public void ClickProducts()
         {
-            var navigationList = WebDriverFactory.GetDriver().FindElements(navigationBar);
+            var navigationList = driver.FindElements(navigationBar);
             foreach (var navItem in navigationList)
             {
                 var productsInnerText = actions.GetText(navItem, "Products navigation item");
@@ -51,7 +53,7 @@ namespace Ui.Automation.Tests.Pages
             }
         }
 
-          public void ClickDeleteAccount()
+        public void ClickDeleteAccount()
         {
             var navigationList = WebDriverFactory.GetDriver().FindElements(navigationBar);
             foreach (var navItem in navigationList)

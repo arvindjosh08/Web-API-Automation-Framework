@@ -5,13 +5,15 @@ using OpenQA.Selenium.Support.UI;
 
 namespace Ui.Automation.Tests.Pages
 {
-    public class SignUpPage : BasePage
+    public class SignUpPage
     {
+        private readonly IWebDriver driver;
         private ElementActions actions;
         private static readonly Logger logger = LogManager.GetCurrentClassLogger();
-        public SignUpPage() : base()
+        public SignUpPage(IWebDriver driver)
         {
-            this.actions = new ElementActions(); // ElementActions fetches driver internally
+            this.driver = driver;
+            this.actions = new ElementActions(driver);
         }
 
 
@@ -33,58 +35,57 @@ namespace Ui.Automation.Tests.Pages
         public void EnterPassword()
         {
             actions.SendKeys(passwordInputBox, "abcdef", "Password Input Box",10);
-            //actions.SendKeys(WebDriverFactory.GetDriver().FindElement(passwordInputBox), "abcdef", "Password Input Box", 10);
         }
         public void EnterFirstName()
         {
-            actions.SendKeys(WebDriverFactory.GetDriver().FindElement(firstNameInputBox), "abcdef", "Fisrtname Input Box");
+            actions.SendKeys(driver.FindElement(firstNameInputBox), "abcdef", "Fisrtname Input Box");
         }
         public void EnterLastName()
         {
-            actions.SendKeys(WebDriverFactory.GetDriver().FindElement(lastNameInputBox), "abcdef", "Lastname Input Box");
+            actions.SendKeys(driver.FindElement(lastNameInputBox), "abcdef", "Lastname Input Box");
         }
         public void EnterAddress()
         {
-            actions.SendKeys(WebDriverFactory.GetDriver().FindElement(address1InputBox), "abcdef", "Address Input Box");
+            actions.SendKeys(driver.FindElement(address1InputBox), "abcdef", "Address Input Box");
         }
         public void EnterState()
         {
-            actions.SendKeys(WebDriverFactory.GetDriver().FindElement(stateInputBox), "NSW", "State Input Box");
+            actions.SendKeys(driver.FindElement(stateInputBox), "NSW", "State Input Box");
         }
         public void EnterCity()
         {
-            actions.SendKeys(WebDriverFactory.GetDriver().FindElement(cityInputBox), "Sydney", "City Input Box");
+            actions.SendKeys(driver.FindElement(cityInputBox), "Sydney", "City Input Box");
         }
         public void EnterZipCode()
         {
-            actions.SendKeys(WebDriverFactory.GetDriver().FindElement(zipCodeInputBox), "2153", "Zipcode Input Box");
+            actions.SendKeys(driver.FindElement(zipCodeInputBox), "2153", "Zipcode Input Box");
         }
         public void EnterMobile()
         {
-            actions.SendKeys(WebDriverFactory.GetDriver().FindElement(mobileNumInputBox), "0404584545", "Mobile Number Input Box");
+            actions.SendKeys(driver.FindElement(mobileNumInputBox), "0404584545", "Mobile Number Input Box");
         }
 
         public void ClickSubmit()
         {
             IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
             js.ExecuteScript("window.scrollTo(arguments[0], arguments[1]);", 0, 1200);
-            actions.Click(WebDriverFactory.GetDriver().FindElement(createAccountButton), "Submit Button");
+            actions.Click(driver.FindElement(createAccountButton), "Submit Button");
             WaitForContinueButtonToVisible();
         }
 
         public string GetAccountCreateText()
         {
-            return actions.GetText(WebDriverFactory.GetDriver().FindElement(accountCreateText), "Account Created Text", 10);
+            return actions.GetText(driver.FindElement(accountCreateText), "Account Created Text", 10);
         }
 
         public void ClickContinueButton()
         {
-            actions.Click(WebDriverFactory.GetDriver().FindElement(continueButton), "Continue button");
+            actions.Click(driver.FindElement(continueButton), "Continue button");
         }
 
         public string GetAccountDeletionText()
         {
-            return actions.GetText(WebDriverFactory.GetDriver().FindElement(accountDeletion), "Account Deletion Text");
+            return actions.GetText(driver.FindElement(accountDeletion), "Account Deletion Text");
         }
         public void WaitForContinueButtonToVisible()
         {

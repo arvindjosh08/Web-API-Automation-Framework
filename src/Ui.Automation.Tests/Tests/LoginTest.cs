@@ -13,10 +13,10 @@ namespace Ui.Automation.Tests.Tests
         public void VerifyLoginFunctionality()
         {
             logger.Info("*******STARTING - VerifyLoginFunctionality test");
-            WebDriverFactory.GetDriver().Navigate().GoToUrl("https://www.automationexercise.com/");
-            var homePage = new HomePage();
+            driver.Navigate().GoToUrl("https://www.automationexercise.com/");
+            HomePage homePage = new HomePage(driver);
             homePage.ClickLogin();
-            var loginPage = new LoginPage();
+            LoginPage loginPage = new LoginPage(driver);
             loginPage.EnterEmailAddress();
             loginPage.EnterPassword();
             loginPage.ClickLogin();

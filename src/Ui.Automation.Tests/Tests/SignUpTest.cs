@@ -1,4 +1,3 @@
-using AventStack.ExtentReports.Model;
 using Ui.Automation.Tests.Base;
 using Ui.Automation.Tests.Pages;
 
@@ -14,14 +13,14 @@ namespace Ui.Automation.Tests.Tests
         public  void VerifySignUpAndDeleteFunctionality()
         {
             logger.Info("*******STARTING -  VerifySignUpAndDeleteFunctionality test");
-            WebDriverFactory.GetDriver().Navigate().GoToUrl("https://www.automationexercise.com/");
-            var homePage = new HomePage();
+            driver.Navigate().GoToUrl("https://www.automationexercise.com/");
+            HomePage homePage = new HomePage(driver);
             homePage.ClickLogin();
-            var loginPage = new LoginPage();
+            LoginPage loginPage = new LoginPage(driver);
            var randomName= loginPage.EnterSignUpName();
             loginPage.EnterSignUpEmail();
             loginPage.ClickSignUpButton();
-            var signUpPage = new SignUpPage();
+            SignUpPage signUpPage = new SignUpPage(driver);
             signUpPage.EnterPassword();
             signUpPage.EnterFirstName();
             signUpPage.EnterLastName();

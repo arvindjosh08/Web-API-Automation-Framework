@@ -13,10 +13,10 @@ namespace Ui.Automation.Tests.Tests
         public void VerifySearchProductsFunctionality()
         {
             logger.Info("*******STARTING -  VerifySearchProductsFunctionality test");
-            WebDriverFactory.GetDriver().Navigate().GoToUrl("https://www.automationexercise.com/");
-            var homePage = new HomePage();
+            driver.Navigate().GoToUrl("https://www.automationexercise.com/");
+            HomePage homePage = new HomePage(driver);
             homePage.ClickProducts();
-            var productsPage = new ProductsPage();
+            ProductsPage productsPage = new ProductsPage(driver);
             productsPage.EnterProductName("jeans");
             productsPage.ClickSearchButton();
             Assert.AreEqual("SEARCHED PRODUCTS", productsPage.GetSearchedProductTitle(), "Searched Products title does not match");
