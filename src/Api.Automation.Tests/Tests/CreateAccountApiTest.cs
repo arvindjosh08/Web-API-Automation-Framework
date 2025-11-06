@@ -25,7 +25,6 @@ namespace Api.Automation.Tests.Tests
         {
 
             //Arrange
-            logger.Info("*******STARTING -  CreateProduct_ShouldReturn201 test");
             string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string fullPath = Path.Combine(baseDirectory, "src/Api.Automation.Tests/Data/ApiRequests/CreateAccountReq.json");
             string json = File.ReadAllText(fullPath);
@@ -42,7 +41,7 @@ namespace Api.Automation.Tests.Tests
             var responseObj = JsonConvert.DeserializeObject<CreateAccountResDto>(response.Content);
 
             //Assert
-            Assert.AreEqual(201, responseObj.responseCode);
+            Assert.AreEqual(205, responseObj.responseCode);
             Assert.AreEqual("User created!", responseObj.message);
 
         }

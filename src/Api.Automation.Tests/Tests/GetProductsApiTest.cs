@@ -22,7 +22,6 @@ namespace Api.Automation.Tests.Tests
         [TestCategory("api")]
         public async Task GetProducts_ShouldReturn200()
         {
-            logger.Info("*******STARTING -  GetProducts_ShouldReturn200 test");
             var response = await _getProducts.GetProductList();
             ProductResponseDto responseObj = JsonConvert.DeserializeObject<ProductResponseDto>(response.Content);
             Assert.AreEqual(200, responseObj.ResponseCode);
@@ -32,7 +31,6 @@ namespace Api.Automation.Tests.Tests
         [TestCategory("api")]
         public async Task GetProducts_SchemaValidation()
         {
-            logger.Info("*******STARTING -  GetProducts_SchemaValidation test");
             var response = await _getProducts.GetProductList();
             string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
             string fullPath = Path.Combine(baseDirectory, "src/Api.Automation.Tests/Data/ApiSchema/GetProductsApiSchema.json");

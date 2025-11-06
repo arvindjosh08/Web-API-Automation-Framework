@@ -8,7 +8,6 @@ namespace Ui.Automation.Tests.Pages
     {
         private readonly IWebDriver driver;
         private ElementActions actions;
-        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         public LoginPage(IWebDriver driver)
         {
             this.driver = driver;

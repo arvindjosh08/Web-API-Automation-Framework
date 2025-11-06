@@ -11,11 +11,6 @@ namespace Ui.Automation.Tests.Base
 
         public TestContext TestContext { get; set; }
         protected static readonly Logger logger = LogManager.GetCurrentClassLogger();
-         static BaseTest()
-        {
-            LogManager.LoadConfiguration("NLog.config");
-            logger.Info("NLog initialized successfully.");
-        }
 
         [TestInitialize]
         public void SetUp()

@@ -8,11 +8,11 @@ namespace Ui.Automation.Tests.Base
     public class ElementActions
     {
         private IWebDriver driver;
+        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         private readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(20);
         private const int MaxRetryCount = 3;
-        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
-        public ElementActions(IWebDriver driver )
+        public ElementActions(IWebDriver driver)
         {
             this.driver = driver;
         }

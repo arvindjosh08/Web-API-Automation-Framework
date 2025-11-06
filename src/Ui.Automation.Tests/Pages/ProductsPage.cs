@@ -7,8 +7,8 @@ namespace Ui.Automation.Tests.Pages
     public class ProductsPage
     {
         private readonly IWebDriver driver;
+        private Logger logger;
         private ElementActions actions;
-        private static readonly Logger logger = LogManager.GetCurrentClassLogger();
         public ProductsPage(IWebDriver driver)
         {
             this.driver = driver;
