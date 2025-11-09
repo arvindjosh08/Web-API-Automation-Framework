@@ -41,7 +41,7 @@ namespace Api.Automation.Tests.Tests
             var responseObj = JsonConvert.DeserializeObject<CreateAccountResDto>(response.Content);
 
             //Assert
-            Assert.AreEqual(205, responseObj.responseCode);
+            Assert.AreEqual(201, responseObj.responseCode);
             Assert.AreEqual("User created!", responseObj.message);
 
         }

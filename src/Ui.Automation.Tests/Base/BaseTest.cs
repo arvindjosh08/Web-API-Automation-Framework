@@ -12,6 +12,7 @@ namespace Ui.Automation.Tests.Base
         public TestContext TestContext { get; set; }
         protected static readonly Logger logger = LogManager.GetCurrentClassLogger();
 
+
         [TestInitialize]
         public void SetUp()
         {
@@ -26,6 +27,7 @@ namespace Ui.Automation.Tests.Base
                 throw new Exception($"Failed to initialize WebDriver: {e.Message}", e);
             }
         }
+
 
         private string GetBrowserName()
         {
